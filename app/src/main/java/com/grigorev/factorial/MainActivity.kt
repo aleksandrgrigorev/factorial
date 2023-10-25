@@ -1,9 +1,9 @@
 package com.grigorev.factorial
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.grigorev.factorial.databinding.ActivityMainBinding
 
@@ -27,26 +27,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.progress.observe(this) {
-            if (it) {
-                binding.progressBarLoading.visibility = View.VISIBLE
-                binding.buttonCalculate.isEnabled = false
-            } else {
-                binding.progressBarLoading.visibility = View.GONE
-                binding.buttonCalculate.isEnabled = true
-            }
-        }
-        viewModel.error.observe(this) {
-            if (it) {
+        viewModel.state.observe(this) {
+            if (it.isError) {
                 Toast.makeText(
                     this,
                     "You didn't enter a value",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-        viewModel.factorial.observe(this) {
-            binding.textViewFactorial.text = it
+            if (it.isInProgress) {
+                binding.progressBarLoading.visibility = View.VISIBLE
+                binding.buttonCalculate.isEnabled = false
+            } else {
+                binding.progressBarLoading.visibility = View.GONE
+                binding.buttonCalculate.isEnabled = true
+            }
+            binding.textViewFactorial.text = it.factorial
         }
     }
 }
